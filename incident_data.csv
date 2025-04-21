@@ -1,0 +1,2 @@
+sys_id,incident_id,short_description,description,assignment_group,category
+1c741bd70b2322007518478d83673af3,INC0000060,Unable to connect to email,I am unable to connect to the email server. It appears to be down.,Network,Inquiry/Help
