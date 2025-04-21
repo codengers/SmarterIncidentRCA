@@ -41,7 +41,7 @@ ENV/
 
 # dotenv environment variables
 .env
-.env.*
+
 
 # System files
 .DS_Store
