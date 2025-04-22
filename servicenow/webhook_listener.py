@@ -8,23 +8,22 @@ import html
 
 app = FastAPI()
 
-def format_rca_for_servicenow(raw_text):
-    # Extract just the content part
-    content_match = re.search(r"content='(.*?)'[\s,]", raw_text, re.DOTALL)
-    if not content_match:
-        #return "No RCA content found."
-        content = raw_text
-    else:   
-        content = content_match.group(1)
+# Function to clean text
+def clean_text(text):
 
-    # Decode HTML and escape sequences
-    content = html.unescape(content)
-    content = content.encode().decode('unicode_escape')  # Handle \n and others
+    # Try to find the content=... part using regex (greedy inside single quotes)
+    match = re.search(r"content='(.*?)'\s*(\w+_kwargs|response_metadata|id|usage_metadata|$)", text, re.DOTALL)
+    if not match:
+        return "Note: No content found."
 
-    # Clean and beautify
-    content = content.strip()
-    formatted = f"""🧠 *RCA Bot Suggestion*\n\n{content}"""
-    return formatted
+    raw_content = match.group(1)
+
+    # Clean and format the content
+    formatted = raw_content.replace('\\n', '\n')         # Decode newline characters
+    #formatted = re.sub(r'\s*n\s*', '', formatted)         # Remove stray 'n'
+    #formatted = re.sub(r'-\s*•', '•', formatted)          # Clean up bullets
+
+    return formatted.strip()
 
 @app.post("/analyze_incident")
 async def analyze_incident_endpoint(request: Request):
@@ -32,7 +31,7 @@ async def analyze_incident_endpoint(request: Request):
     incident_id = data.get("incident_id")
     sys_id = data.get("sys_id")
     analysis = analyze_incident(data)
-    formatted_rca = format_rca_for_servicenow(analysis)
+    formatted_rca = clean_text(analysis)
     update_incident_notes(sys_id, formatted_rca)
     return {"status": "RCA posted", "incident_id": incident_id, "RCA": formatted_rca}
 

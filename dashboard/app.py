@@ -12,6 +12,21 @@ def sanitize_for_json(data_dict):
 st.set_page_config(page_title="Real-time Incident RCA Dashboard", layout="wide")
 st.title("📊 RCA Dashboard")
 
+# Path to your existing file in the project
+file_path = 'SN_incident_data.csv'  # Replace with your actual file path
+
+# Open the file in binary mode and create a download button
+with open(file_path, 'rb') as file:
+    file_data = file.read()
+
+# Streamlit download button for the file
+st.download_button(
+    label="📥 Download File",
+    data=file_data,
+    file_name="SN_incident_data.csv",  # The name that will be shown when the user downloads
+    mime="text/plain"  # MIME type for text files (adjust for other types)
+)
+
 # Load incident data (could come from ServiceNow directly)
 if "data" not in st.session_state:
     st.session_state.data = []
