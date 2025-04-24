@@ -5,6 +5,6 @@ langchain
 groqcloud
 langchain_groq
 python-dotenv
-chromadb
 streamlit
 pandas
+chromadb

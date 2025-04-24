@@ -1,8 +1,16 @@
 import csv
 import chromadb
 from chromadb.utils import embedding_functions
+import os
 
-client = chromadb.PersistentClient(path=".chromadb")
+# Ensure persistent directory is available
+try:
+    os.makedirs(".chromadb", exist_ok=True)
+    client = chromadb.PersistentClient(path=".chromadb")
+except Exception as e:
+    print(f"[WARNING] Falling back to in-memory ChromaDB: {e}")
+    client = chromadb.Client()
+
 collection = client.get_or_create_collection("incident_memory")
 embedding_fn = embedding_functions.DefaultEmbeddingFunction()
 

@@ -2,7 +2,14 @@ import chromadb
 from chromadb.utils import embedding_functions
 import os
 
-client = chromadb.PersistentClient(path=".chromadb")
+# Try to use persistent client, fallback to in-memory if it fails
+try:
+    os.makedirs(".chromadb", exist_ok=True)
+    client = chromadb.PersistentClient(path=".chromadb")
+except Exception as e:
+    print(f"[WARNING] Falling back to in-memory ChromaDB: {e}")
+    client = chromadb.Client()  # in-memory fallback
+
 collection = client.get_or_create_collection("incident_memory")
 
 embedding_fn = embedding_functions.DefaultEmbeddingFunction()
