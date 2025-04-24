@@ -43,4 +43,4 @@ def analyze_incident(data):
     data["similar_cases"] = similar_cases
     formatted_prompt = prompt.format(**data)
     result = llm.invoke(formatted_prompt)
-    return f"\n\n🧠 RCA Bot Suggestion:\n{result}"
+    return "\n\nRCA Bot Suggestion:\n\n{}".format(result)

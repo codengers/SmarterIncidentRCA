@@ -1,9 +1,12 @@
 import streamlit as st
 import requests
 import pandas as pd
-
 import math
-import pandas as pd
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from servicenow.webhook_listener import analyze_incident_endpoint
+
 
 def sanitize_for_json(data_dict):
     """Replace NaN values with None for JSON serialization."""
@@ -43,5 +46,5 @@ if st.session_state.data:
             st.write(incident)
             if st.button("Run RCA", key=incident['incident_id']):
                 sanitized_incident = sanitize_for_json(incident)
-                response = requests.post("http://localhost:8000/analyze_incident", json=sanitized_incident)
-                st.write(response.json())
+                response = analyze_incident_endpoint(sanitized_incident)
+                st.write(response)
