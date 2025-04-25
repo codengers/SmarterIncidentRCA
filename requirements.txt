@@ -5,6 +5,7 @@ langchain
 groqcloud
 langchain_groq
 python-dotenv
-chromadb
 streamlit
 pandas
+chromadb>=0.4.14
+duckdb>=0.10.0

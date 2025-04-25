@@ -7,20 +7,21 @@ import html
 
 # Function to clean text
 def clean_text(text):
-
-    # Try to find the content=... part using regex (greedy inside single quotes)
-    match = re.search(r"content='(.*?)'\s*(\w+_kwargs|response_metadata|id|usage_metadata|$)", text, re.DOTALL)
-    if not match:
-        return "Note: No content found."
-
-    raw_content = match.group(1)
-
-    # Clean and format the content
-    formatted = raw_content.replace('\\n', '\n')         # Decode newline characters
-    #formatted = re.sub(r'\s*n\s*', '', formatted)         # Remove stray 'n'
-    #formatted = re.sub(r'-\s*•', '•', formatted)          # Clean up bullets
-
-    return formatted.strip()
+    # Remove 'additional_kwargs={...} response_metadata={...} id='...' usage_metadata={...}'
+    cleaned_text = re.sub(r"additional_kwargs=\{.*?usage_metadata=\{.*?\}", "", text)
+    text = cleaned_text.strip()
+    content_prefix = "content="
+    if content_prefix in text:
+        start_index = text.find(content_prefix) + len(content_prefix)
+        content_str = text[start_index:].strip()
+        if content_str.startswith('"') and content_str.endswith('"'):
+            content_str = content_str[1:-1]
+        elif content_str.startswith("'") and content_str.endswith("'"):
+            content_str = content_str[1:-1]
+        content_str = content_str.replace('\\n', '\n')
+        return content_str.strip()
+    else:
+        return text.strip()
 
 def analyze_incident_endpoint(data):
     incident_id = data.get("incident_id")
